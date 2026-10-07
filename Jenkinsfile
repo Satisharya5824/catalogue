@@ -12,10 +12,16 @@ pipeline {
         stage('Read package.json') {
             steps {
                 script {
-                    def packageJson = readJSON file: 'catalogue/package.json'
+                    def packageJson = readJSON file: 'package.json'
                     appVersion = packageJson.version
                     echo "Package version: ${appVersion}"
                 }
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
             }
         }
 
@@ -38,17 +44,6 @@ pipeline {
                 echo 'Deploying the application'
             }
         }
-
-        stage('Install Dependencies') {
-            steps {
-                script {
-                   sh """
-                        npm install
-                   """
-                }
-            }
-        }
-        
     }
 
     post {
