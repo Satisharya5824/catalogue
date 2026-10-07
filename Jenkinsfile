@@ -4,37 +4,51 @@ pipeline {
     }
 
     environment {
-        COURSE = 'jenkins'
+        appVersion = ''
     }
 
     stages {
 
-        stage('Build') {
+        stage('Read package.json') {
             steps {
-                echo 'Building...'
-
-                sh '''
-                    echo "Hello Build"
-                    echo "Course: $COURSE"
-                '''
-
-                echo 'Building the application'
+                script {
+                    def packageJson = readJSON file: 'catalogue/package.json'
+                    appVersion = packageJson.version
+                    echo "Package version: ${appVersion}"
+                }
             }
         }
 
         stage('Test') {
             steps {
-                echo 'Testing...'
+                script {
+                    echo 'testing ...'
+                }
+
                 echo 'Testing the application'
             }
         }
 
         stage('Deploy') {
             steps {
-                echo 'Deploying...'
+                script {
+                    echo 'deploying ...'
+                }
+
                 echo 'Deploying the application'
             }
         }
+
+        stage('Install Dependencies') {
+            steps {
+                script {
+                   sh """
+                        npm install
+                   """
+                }
+            }
+        }
+        
     }
 
     post {
