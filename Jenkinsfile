@@ -1,3 +1,4 @@
+```groovy
 pipeline {
     agent {
         label 'AGENT-1'
@@ -12,43 +13,35 @@ pipeline {
         stage('Read package.json') {
             steps {
                 script {
-                    def packageJson = readJSON file: 'catalogue/package.json'
+                    def packageJson = new groovy.json.JsonSlurperClassic().parseText(
+                        readFile('package.json')
+                    )
+
                     appVersion = packageJson.version
+
+                    echo "Package name: ${packageJson.name}"
                     echo "Package version: ${appVersion}"
                 }
             }
         }
 
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
+
         stage('Test') {
             steps {
-                script {
-                    echo 'testing ...'
-                }
-
                 echo 'Testing the application'
             }
         }
 
         stage('Deploy') {
             steps {
-                script {
-                    echo 'deploying ...'
-                }
-
-                echo 'Deploying the application'
+                echo "Deploying ${appVersion}"
             }
         }
-
-        stage('Install Dependencies') {
-            steps {
-                script {
-                   sh """
-                        npm install
-                   """
-                }
-            }
-        }
-        
     }
 
     post {
@@ -66,3 +59,4 @@ pipeline {
         }
     }
 }
+```
