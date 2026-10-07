@@ -1,3 +1,4 @@
+```groovy
 pipeline {
     agent {
         label 'AGENT-1'
@@ -12,13 +13,11 @@ pipeline {
         stage('Read package.json') {
             steps {
                 script {
-                    def packageJson = new groovy.json.JsonSlurperClassic().parseText(
-                        readFile('package.json')
-                    )
+                    appVersion = sh(
+                        script: "grep '\"version\"' package.json | head -1 | sed 's/.*\"version\": \"\\([^\"]*\\)\".*/\\1/'",
+                        returnStdout: true
+                    ).trim()
 
-                    appVersion = packageJson.version
-
-                    echo "Package name: ${packageJson.name}"
                     echo "Package version: ${appVersion}"
                 }
             }
@@ -58,3 +57,4 @@ pipeline {
         }
     }
 }
+```
