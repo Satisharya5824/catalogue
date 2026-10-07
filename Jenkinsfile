@@ -1,0 +1,68 @@
+pipeline {
+    agent {
+        label 'AGENT-1'
+    }
+
+    environment {
+        appVersion = ''
+    }
+
+    stages {
+
+        stage('Read package.json') {
+            steps {
+                script {
+                    def packageJson = readJSON file: 'catalogue/package.json'
+                    appVersion = packageJson.version
+                    echo "Package version: ${appVersion}"
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                script {
+                    echo 'testing ...'
+                }
+
+                echo 'Testing the application'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    echo 'deploying ...'
+                }
+
+                echo 'Deploying the application'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                script {
+                   sh """
+                        npm install
+                   """
+                }
+            }
+        }
+        
+    }
+
+    post {
+        always {
+            echo 'I will always say Hello again!'
+            deleteDir()
+        }
+
+        success {
+            echo 'Hello Success'
+        }
+
+        failure {
+            echo 'Hello Failure'
+        }
+    }
+}
