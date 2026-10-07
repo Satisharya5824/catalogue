@@ -4,7 +4,7 @@ pipeline {
     }
 
     environment {
-        appVersion = ''
+        APP_VERSION = ''
     }
 
     stages {
@@ -13,8 +13,8 @@ pipeline {
             steps {
                 script {
                     def packageJson = readJSON file: 'package.json'
-                    appVersion = packageJson.version
-                    echo "Package version: ${appVersion}"
+                    env.APP_VERSION = packageJson.version.toString()
+                    echo "Package version: ${env.APP_VERSION}"
                 }
             }
         }
@@ -27,21 +27,13 @@ pipeline {
 
         stage('Test') {
             steps {
-                script {
-                    echo 'testing ...'
-                }
-
                 echo 'Testing the application'
             }
         }
 
         stage('Deploy') {
             steps {
-                script {
-                    echo 'deploying ...'
-                }
-
-                echo 'Deploying the application'
+                echo "Deploying catalogue version ${env.APP_VERSION}"
             }
         }
     }
